@@ -13,7 +13,6 @@ namespace AbTest.Data.Db
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Experiment> Experiments { get; set; }
         public DbSet<ExperimentKey> ExperimentKeys { get; set; }
-        public DbSet<ExperimentValue> ExperimentValues { get; set; }
-        public AbTestDbContext(DbContextOptions options) : base(options) { }
+        public AbTestDbContext(DbContextOptions options) : base(options) { }      
     }
 }

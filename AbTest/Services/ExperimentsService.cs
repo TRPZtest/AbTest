@@ -24,9 +24,9 @@ namespace AbTest.Services
                 session = await _repository.AddSession(deviceToken);
             else
             {
-                var existingExperiment = session.Experiments.FirstOrDefault(x => x.ExperimentValue.ExperimentKey.Key == EXPERIMENT_KEY);
+                var existingExperiment = session.Experiments.FirstOrDefault(x => x.ExperimentKey.Key == EXPERIMENT_KEY);
                 if (existingExperiment != null)
-                    return new KeyValuePair<string, string>(existingExperiment.ExperimentValue.ExperimentKey.Key, existingExperiment.ExperimentValue.Value);
+                    return new KeyValuePair<string, string>(existingExperiment.ExperimentKey.Key, existingExperiment.Value);
             }
 
             var experimentKeyRecord = await _repository.GetExperimentKeyAsync(EXPERIMENT_KEY);
@@ -38,11 +38,11 @@ namespace AbTest.Services
 
             var experimentValues = await _repository.GetExperimentValues(EXPERIMENT_KEY);
 
-            var randomValue = Randomizer.GetRandomExperimentValue(experimentValues);
+            var randomExperimentCase = Randomizer.GetRandomExperimentValue(experimentValues);
 
-            await _repository.AddExperiment(new Experiment(randomValue, session));
+            await _repository.AddExperiment(randomExperimentCase, session.Id);
 
-            return new KeyValuePair<string, string>(experimentKeyRecord.Key, randomValue.Value);
+            return new KeyValuePair<string, string>(experimentKeyRecord.Key, randomExperimentCase.Value);
         }
     }
 }

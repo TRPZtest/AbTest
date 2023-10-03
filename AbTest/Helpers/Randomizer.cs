@@ -24,7 +24,7 @@ namespace AbTest.Helpers
         //    return cases.Keys.Last();
         //}
 
-        public static ExperimentValue GetRandomExperimentValue(IEnumerable<ExperimentValue> experimentValues)
+        public static Experiment GetRandomExperimentValue(IEnumerable<Experiment> experimentValues)
         {
             var random = new Random();
 

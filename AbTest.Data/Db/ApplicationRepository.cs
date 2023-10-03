@@ -25,10 +25,9 @@ namespace AbTest.Data.Db
         {
             var session = await _dbContext.Sessions
                 .AsNoTracking()
-                .Include(x => x.Experiments)                
-                    .ThenInclude(x => x.ExperimentValue)
+                .Include(x => x.Experiments)                                    
                         .ThenInclude(x => x.ExperimentKey)
-                            .AsNoTracking()
+                                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.DeviceToken == deviceToken);
 
             return session;               
@@ -70,21 +69,23 @@ namespace AbTest.Data.Db
             return session;
         }
         
-        public async Task<ExperimentValue[]> GetExperimentValues(string experimentKey)
+        public async Task<Experiment[]> GetExperimentValues(string experimentKey)
         {
-            var experimentValues = await _dbContext.ExperimentValues
+            var experimentValues = await _dbContext.Experiments
                 .AsNoTracking()
+                .Where(x => x.ExperimentKey.Key == experimentKey)
                 .Include(x => x.ExperimentKey)
-                    .AsNoTracking()
-                .Where(x => x.ExperimentKey.Key == experimentKey)                
+                .AsNoTracking()                          
                 .ToArrayAsync();
 
             return experimentValues;
         }
 
-        public async Task AddExperiment(Experiment experiment)
-        {          
-            _dbContext.Experiments.Attach(experiment);
+        public async Task AddExperiment(Experiment experiment, long SessionId)
+        {
+            var session = await _dbContext.Sessions.FirstAsync(x => x.Id == SessionId);
+             
+            session.Experiments = new Experiment[] { experiment };
 
             await _dbContext.SaveChangesAsync();
         }
