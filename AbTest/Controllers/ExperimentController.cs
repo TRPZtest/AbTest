@@ -10,14 +10,14 @@ namespace AbTest.Controllers
     public class ExperimentController : ControllerBase
     {      
         [HttpGet]
-        public async Task<IActionResult> ButtonColor([FromQuery]RequestBase request, [FromServices]ButtonColorHandler requestHandler)
+        public async Task<IActionResult> ButtonColor([FromQuery]ExperimentRequestDto request, [FromServices]ButtonColorHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);
             return result;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Price([FromQuery] RequestBase request, [FromServices] PriceHandler requestHandler)
+        public async Task<IActionResult> Price([FromQuery] ExperimentRequestDto request, [FromServices] PriceHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);
             return result;

@@ -6,7 +6,7 @@ using AbTest.Services;
 
 namespace AbTest.RequestHandlers
 {
-    public class ButtonColorHandler : HandlerBase<RequestBase, KeyValuePair<string, string>?>
+    public class ButtonColorHandler : HandlerBase<ExperimentRequestDto, KeyValuePair<string, string>?>
     {
         private readonly ApplicationRepository _repository;
 
@@ -15,7 +15,7 @@ namespace AbTest.RequestHandlers
             _repository = repository;
         }
 
-        public override async Task<KeyValuePair<string, string>?> RequestLogic(RequestBase requestDto)
+        public override async Task<KeyValuePair<string, string>?> RequestLogic(ExperimentRequestDto requestDto)
         {
             var experimentKey = "button_color";
             var experimentService = new ExperimentsService(experimentKey, _repository);

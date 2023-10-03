@@ -29,11 +29,11 @@ namespace AbTest.Services
                     return null;
             }
 
-            var experimentKey = await _repository.GetExperimentKeyAsync(EXPERIMENT_KEY);
+            var experimentKeyRecord = await _repository.GetExperimentKeyAsync(EXPERIMENT_KEY);
 
-            if (experimentKey == null)
+            if (experimentKeyRecord == null)
                 throw new Exception("Wrong experiment key");
-            if (experimentKey?.Created > session.Created)
+            if (experimentKeyRecord?.Created > session.Created)
                 return null;
 
             var experimentValues = await _repository.GetExperimentValues(EXPERIMENT_KEY);
@@ -42,7 +42,7 @@ namespace AbTest.Services
 
             await _repository.AddExperiment(new Experiment(randomButtonColor, session));
 
-            return new KeyValuePair<string, string>(experimentKey.Key, randomButtonColor.Value);
+            return new KeyValuePair<string, string>(experimentKeyRecord.Key, randomButtonColor.Value);
         }
     }
 }
