@@ -11,6 +11,6 @@ namespace AbTest.Model
     {
         [Required]
         [FromQuery(Name = "device-token")]
-        public string   DeviceId { get; set; }
+        public string   DeviceToken { get; set; }
     }
 }

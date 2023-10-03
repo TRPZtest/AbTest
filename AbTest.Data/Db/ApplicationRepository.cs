@@ -1,10 +1,12 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using AbTest.Data.Db.Entites;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,35 +19,57 @@ namespace AbTest.Data.Db
         public ApplicationRepository(AbTestDbContext dbContext) 
         { 
             _dbContext = dbContext;
+            _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        }
+     
+        public async Task<Session?> GetSession(string deviceToken)
+        {
+            var session = await _dbContext.Sessions
+                .AsNoTracking()
+                .Include(x => x.Experiments)                
+                    .ThenInclude(x => x.ExperimentValue)
+                        .ThenInclude(x => x.ExperimentKey)
+                            .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.DeviceToken == deviceToken);
+
+            return session;               
         }
 
-        public async Task<bool> IsSessionExistAsync(string deviceId)
+        public async Task<ExperimentKey> GetExperimentKeyAsync(string experimentKey)
         {
-            var deviceIdParam = new SqlParameter("@DeviceId", deviceId);
-            var countParam = new SqlParameter("@Count", System.Data.SqlDbType.Int) { Direction = System.Data.ParameterDirection.Output };
-            _dbContext.Database.ExecuteSqlRaw("SELECT @Count =  count(Id) FROM dbo.Sessions s WHERE s.DeviceId = @DeviceId", deviceIdParam, countParam);
+            var key = await _dbContext.ExperimentKeys
+                .AsNoTracking()
+                .FirstAsync(x => x.Key == experimentKey);
 
-            var isExist = (int)countParam.Value > 0;
-
-            return isExist;
+            return key;
         }
 
-        public async Task AddSession(string deviceId)
+        public async Task<Session> AddSession(string deviceToken)
         {
-            var deviceIdParam = new SqlParameter("@DeviceId", deviceId);
-            await _dbContext.Database.ExecuteSqlRawAsync("INSERT INTO dbo.Sessions VALUES (@DeviceId)", deviceIdParam);
+            var session = new Session { DeviceToken = deviceToken, Created = DateTime.Now };
+            await _dbContext.Sessions.AddAsync(session);
+            await _dbContext.SaveChangesAsync();
+
+            return session;
+        }
+        
+        public async Task<ExperimentValue[]> GetExperimentValues(string experimentKey)
+        {
+            var experimentValues = await _dbContext.ExperimentValues
+                .AsNoTracking()
+                .Include(x => x.ExperimentKey)
+                    .AsNoTracking()
+                .Where(x => x.ExperimentKey.Key == experimentKey)                
+                .ToArrayAsync();
+
+            return experimentValues;
         }
 
-        public async Task AddExperiment(string deviceId, long experimentKeyId, long experimentValueId)
-        {
-            var parameters = new SqlParameter[]
-            {
-                new SqlParameter("@DeviceId", deviceId),
-                new SqlParameter("@ExperimentKeyId", experimentKeyId),
-                new SqlParameter("@ExperimentValueId", experimentValueId)
-            };
+        public async Task AddExperiment(Experiment experiment)
+        {          
+            _dbContext.Experiments.Attach(experiment);
 
-            await _dbContext.Database.ExecuteSqlRawAsync("INSERT INTO dbo.Experiments VALUES()", parameters);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
