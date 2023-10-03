@@ -18,8 +18,7 @@ namespace AbTest.Data.Db
 
         public ApplicationRepository(AbTestDbContext dbContext) 
         { 
-            _dbContext = dbContext;
-            _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            _dbContext = dbContext;            
         }
      
         public async Task<Session?> GetSession(string deviceToken)
@@ -33,6 +32,24 @@ namespace AbTest.Data.Db
                 .FirstOrDefaultAsync(x => x.DeviceToken == deviceToken);
 
             return session;               
+        }
+
+        public async Task<int> GetExperimentsCount()
+        {
+            var count = await _dbContext.Experiments
+                .AsNoTracking()
+                    .CountAsync();
+            
+            return count;
+        }
+
+        public async Task<int> GetDevicesWithExperimentCount()
+        {
+            var count = await _dbContext.Sessions
+                .AsNoTracking()
+                .CountAsync(x => x.Experiments.Any());
+
+            return count;
         }
 
         public async Task<ExperimentKey> GetExperimentKeyAsync(string experimentKey)

@@ -5,16 +5,16 @@ using AbTest.Services;
 
 namespace AbTest.RequestHandlers
 {
-    public class PriceHandler : HandlerBase<RequestBase, KeyValuePair<string, string>?>
+    public class PriceHandler : HandlerBase<DeviceTokenRequestDto, KeyValuePair<string, string>?>
     {
         private readonly ApplicationRepository _repository;
 
-        public PriceHandler(ApplicationRepository repository, ILogger logger) : base(logger)
+        public PriceHandler(ApplicationRepository repository)
         {
             _repository = repository;
         }
 
-        public override async Task<KeyValuePair<string, string>?> RequestLogic(RequestBase requestDto)
+        public override async Task<KeyValuePair<string, string>?> RequestLogic(DeviceTokenRequestDto requestDto)
         {
             var experimentKey = "price";
             var experimentService = new ExperimentsService(experimentKey, _repository);

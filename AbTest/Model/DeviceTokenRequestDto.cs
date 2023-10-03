@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace AbTest.Model
 {
-    public class ExperimentRequestDto
+    public class DeviceTokenRequestDto
     {
         [Required]
         [FromQuery(Name = "device-token")]

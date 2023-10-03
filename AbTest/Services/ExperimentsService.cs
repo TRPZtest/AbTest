@@ -24,9 +24,9 @@ namespace AbTest.Services
                 session = await _repository.AddSession(deviceToken);
             else
             {
-                var experimentExist = session.Experiments.Any(x => x.ExperimentValue.ExperimentKey.Key == EXPERIMENT_KEY);
-                if (experimentExist)
-                    return null;
+                var existingExperiment = session.Experiments.FirstOrDefault(x => x.ExperimentValue.ExperimentKey.Key == EXPERIMENT_KEY);
+                if (existingExperiment != null)
+                    return new KeyValuePair<string, string>(existingExperiment.ExperimentValue.ExperimentKey.Key, existingExperiment.ExperimentValue.Value);
             }
 
             var experimentKeyRecord = await _repository.GetExperimentKeyAsync(EXPERIMENT_KEY);
@@ -38,11 +38,11 @@ namespace AbTest.Services
 
             var experimentValues = await _repository.GetExperimentValues(EXPERIMENT_KEY);
 
-            var randomButtonColor = Randomizer.GetRandomExperimentValue(experimentValues);
+            var randomValue = Randomizer.GetRandomExperimentValue(experimentValues);
 
-            await _repository.AddExperiment(new Experiment(randomButtonColor, session));
+            await _repository.AddExperiment(new Experiment(randomValue, session));
 
-            return new KeyValuePair<string, string>(experimentKeyRecord.Key, randomButtonColor.Value);
+            return new KeyValuePair<string, string>(experimentKeyRecord.Key, randomValue.Value);
         }
     }
 }

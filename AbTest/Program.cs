@@ -10,7 +10,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddLogging(logging => logging.AddConsole());
   
 builder.Services.AddDbContext<AbTestDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("experiment-db")).EnableSensitiveDataLogging());
 builder.Services.AddScoped<ApplicationRepository>();
@@ -18,9 +17,7 @@ builder.Services.AddScoped<ApplicationRepository>();
 builder.Services.AddMvc();
 builder.Services.AddTransient<ButtonColorHandler>();
 builder.Services.AddTransient<PriceHandler>();
-
-builder.Services.AddLogging(logging => logging.AddConsole());
-
+builder.Services.AddTransient<ExperimentsReportHandler>();
 
 var app = builder.Build();
 
