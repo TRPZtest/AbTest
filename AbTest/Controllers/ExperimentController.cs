@@ -9,7 +9,8 @@ namespace AbTest.Controllers
     [Route("[controller]/[action]")]
     public class ExperimentController : ControllerBase
     {      
-        [HttpGet]
+        [HttpGet]    
+        [ResponseCache(Duration = 7200, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })]
         public async Task<IActionResult> ButtonColor([FromQuery]DeviceTokenRequestDto request, [FromServices]ButtonColorHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);
@@ -17,13 +18,13 @@ namespace AbTest.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 7200, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })]
         public async Task<IActionResult> Price([FromQuery] DeviceTokenRequestDto request, [FromServices]PriceHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);
             return result;
         }
-
-        [HttpGet]
+            
         public async Task<IActionResult> ExperimentReport([FromServices] ExperimentsReportHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(new RequestBase());
