@@ -5,18 +5,16 @@ using AbTest.Model;
 
 namespace AbTest.Services
 {
-    public class ExperimentsService
-    {
-        private readonly string EXPERIMENT_KEY;
+    public class ExperimentService
+    {      
         private readonly ApplicationRepository _repository;
 
-        public ExperimentsService(string experimentKey, ApplicationRepository applicationRepository)
-        {
-            EXPERIMENT_KEY = experimentKey;
+        public ExperimentService(ApplicationRepository applicationRepository)
+        {    
             _repository = applicationRepository;
         }
       
-        public  async Task<KeyValuePair<string, string>?> GetExperimentValue(string deviceToken)
+        public  async Task<KeyValuePair<string, string>?> GetExperimentValue(string deviceToken, string experimentKey)
         {            
             var session = await _repository.GetSession(deviceToken);
 
@@ -24,19 +22,19 @@ namespace AbTest.Services
                 session = await _repository.AddSession(deviceToken);
             else
             {
-                var existingExperiment = session.Experiments.FirstOrDefault(x => x.ExperimentKey.Key == EXPERIMENT_KEY);
+                var existingExperiment = session.Experiments.FirstOrDefault(x => x.ExperimentKey.Key == experimentKey);
                 if (existingExperiment != null)
                     return new KeyValuePair<string, string>(existingExperiment.ExperimentKey.Key, existingExperiment.Value);
             }
 
-            var experimentKeyRecord = await _repository.GetExperimentKeyAsync(EXPERIMENT_KEY);
+            var experimentKeyRecord = await _repository.GetExperimentKeyAsync(experimentKey);
 
             if (experimentKeyRecord == null)
                 throw new Exception("Wrong experiment key");
             if (experimentKeyRecord?.Created > session.Created)
                 return null;
 
-            var experimentValues = await _repository.GetExperimentValues(EXPERIMENT_KEY);
+            var experimentValues = await _repository.GetExperimentValues(experimentKey);
 
             var randomExperimentCase = Randomizer.GetRandomExperimentValue(experimentValues);
 

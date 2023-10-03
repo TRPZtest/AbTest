@@ -8,19 +8,17 @@ namespace AbTest.RequestHandlers
 {
     public class ButtonColorHandler : HandlerBase<DeviceTokenRequestDto, KeyValuePair<string, string>?>
     {
-        private readonly ApplicationRepository _repository;
+        private readonly ExperimentService _experimentService;
+        const string EXPERIMENT_KEY = "button_color";
 
-        public ButtonColorHandler(ApplicationRepository repository)
+        public ButtonColorHandler(ExperimentService experimentService)
         {
-            _repository = repository;
+            _experimentService = experimentService;
         }
 
         public override async Task<KeyValuePair<string, string>?> RequestLogic(DeviceTokenRequestDto requestDto)
         {
-            var experimentKey = "button_color";
-            var experimentService = new ExperimentsService(experimentKey, _repository);
-
-            var result = await experimentService.GetExperimentValue(requestDto.DeviceToken);
+            var result = await _experimentService.GetExperimentValue(requestDto.DeviceToken, EXPERIMENT_KEY);
 
             return result;
         }

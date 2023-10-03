@@ -1,5 +1,6 @@
 using AbTest.Data.Db;
 using AbTest.RequestHandlers;
+using AbTest.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
   
 builder.Services.AddDbContext<AbTestDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("experiment-db")).EnableSensitiveDataLogging());
 builder.Services.AddScoped<ApplicationRepository>();
+builder.Services.AddTransient<ExperimentService>();
 
 builder.Services.AddMvc();
 builder.Services.AddTransient<ButtonColorHandler>();
