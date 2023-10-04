@@ -9,7 +9,9 @@ namespace AbTest.Controllers
     [Route("[controller]/[action]")]
     public class ExperimentController : ControllerBase
     {      
-        [HttpGet]    
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuePair<string, string>))]
+        [ProducesResponseType(StatusCodes.Status204NoContent]
         [ResponseCache(Duration = 10, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })] //caching response for the same device-token //Duration = 10 is good for testing
         public async Task<IActionResult> ButtonColor([FromQuery]DeviceTokenRequestDto request, [FromServices]ButtonColorHandler requestHandler)
         {
@@ -18,6 +20,8 @@ namespace AbTest.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuePair<string, string>))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ResponseCache(Duration = 10, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })]
         public async Task<IActionResult> Price([FromQuery] DeviceTokenRequestDto request, [FromServices]PriceHandler requestHandler)
         {
@@ -26,6 +30,7 @@ namespace AbTest.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExperimentsReportDto))]
         public async Task<IActionResult> ExperimentReport([FromServices] ExperimentsReportHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(new RequestBase());
