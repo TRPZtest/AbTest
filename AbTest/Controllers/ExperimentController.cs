@@ -11,7 +11,7 @@ namespace AbTest.Controllers
     {      
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(KeyValuePair<string, string>))]
-        [ProducesResponseType(StatusCodes.Status204NoContent]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ResponseCache(Duration = 10, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })] //caching response for the same device-token //Duration = 10 is good for testing
         public async Task<IActionResult> ButtonColor([FromQuery]DeviceTokenRequestDto request, [FromServices]ButtonColorHandler requestHandler)
         {

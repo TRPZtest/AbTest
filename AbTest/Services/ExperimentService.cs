@@ -7,9 +7,9 @@ namespace AbTest.Services
 {
     public class ExperimentService
     {      
-        private readonly ApplicationRepository _repository;
+        private readonly IApplicationRepository _repository;
 
-        public ExperimentService(ApplicationRepository applicationRepository)
+        public ExperimentService(IApplicationRepository applicationRepository)
         {    
             _repository = applicationRepository;
         }
