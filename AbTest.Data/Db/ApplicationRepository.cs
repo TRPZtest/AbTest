@@ -55,7 +55,7 @@ namespace AbTest.Data.Db
         {
             var key = await _dbContext.ExperimentKeys
                 .AsNoTracking()
-                .FirstAsync(x => x.Key == experimentKey);
+                .FirstOrDefaultAsync(x => x.Key == experimentKey);
 
             return key;
         }

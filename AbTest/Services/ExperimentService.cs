@@ -20,6 +20,9 @@ namespace AbTest.Services
 
             var experimentKeyRecord = await _repository.GetExperimentKeyAsync(experimentKey);
 
+            if (experimentKeyRecord == null)
+                throw new Exception("Wrong experiment key");
+
             if (session != null)
             {
                 if (experimentKeyRecord?.Created >= session?.Created) //experiment key must be older than session
@@ -34,10 +37,7 @@ namespace AbTest.Services
                 session = await _repository.AddSession(deviceToken);
                 await _repository.SaveChangesAsync();
             }
-              
-            if (experimentKeyRecord == null)
-                throw new Exception("Wrong experiment key");
-          
+                                   
             var experimentValues = await _repository.GetExperimentValues(experimentKey, includeSession: false);
 
             var randomExperimentCase = Randomizer.GetRandomExperimentValue(experimentValues);
