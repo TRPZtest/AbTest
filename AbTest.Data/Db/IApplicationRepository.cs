@@ -2,7 +2,7 @@
 
 namespace AbTest.Data.Db
 {
-    public interface IApplicationRepository
+    public interface IApplicationRepository : IDisposable
     {
         Task AddExperiment(Experiment experiment, long SessionId);
         Task<Session> AddSession(string deviceToken);

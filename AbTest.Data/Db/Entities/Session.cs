@@ -12,7 +12,7 @@ namespace AbTest.Data.Db.Entites
     public class Session
     {
         [Key]
-        public long Id { get; set; }
+        public long Id { get; set; } 
         public string DeviceToken { get; set; }
         [Required]
         public DateTime Created { get; set; }       

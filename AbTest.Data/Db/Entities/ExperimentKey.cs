@@ -14,5 +14,6 @@ namespace AbTest.Data.Db.Entites
         public string Key { get; set; }
         [Required]
         public DateTime Created { get; set; }
+        public ICollection<Experiment> Experiments { get; set; }
     }
 }
