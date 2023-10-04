@@ -10,7 +10,7 @@ namespace AbTest.Controllers
     public class ExperimentController : ControllerBase
     {      
         [HttpGet]    
-        [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })]
+        [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })] //caching response for the same device-token //Duration = 5 is good for testing
         public async Task<IActionResult> ButtonColor([FromQuery]DeviceTokenRequestDto request, [FromServices]ButtonColorHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);

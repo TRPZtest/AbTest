@@ -60,6 +60,15 @@ namespace AbTest.Data.Db
             return key;
         }
 
+        public async Task<ExperimentKey[]> GetAllExperimentKeysAsync()
+        {
+            var keys = await _dbContext.ExperimentKeys
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            return keys;
+        }
+
         public async Task<Session> AddSession(string deviceToken)
         {
             var session = new Session { DeviceToken = deviceToken, Created = DateTime.Now };
@@ -69,18 +78,20 @@ namespace AbTest.Data.Db
             return session;
         }
         
-        public async Task<Experiment[]> GetExperimentValues(string experimentKey)
+        public async Task<Experiment[]> GetExperimentValues(string experimentKey, bool includeSession)
         {
-            var experimentValues = await _dbContext.Experiments
+            var experimentValues =  _dbContext.Experiments
                 .AsNoTracking()
                 .Where(x => x.ExperimentKey.Key == experimentKey)
                 .Include(x => x.ExperimentKey)
-                .AsNoTracking()                          
-                .ToArrayAsync();
+                .AsNoTracking();
 
-            return experimentValues;
+            if (includeSession)
+                experimentValues = experimentValues.Include(x => x.Sessions);
+                
+            return await experimentValues.ToArrayAsync(); ;
         }
-
+       
         public async Task AddExperiment(Experiment experiment, long SessionId)
         {
             var session = await _dbContext.Sessions.FirstAsync(x => x.Id == SessionId);

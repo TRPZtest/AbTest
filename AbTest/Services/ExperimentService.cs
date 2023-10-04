@@ -34,7 +34,7 @@ namespace AbTest.Services
             if (experimentKeyRecord?.Created > session.Created) //experiment key must be older than session
                 return null;
 
-            var experimentValues = await _repository.GetExperimentValues(experimentKey);
+            var experimentValues = await _repository.GetExperimentValues(experimentKey, includeSession: false);
 
             var randomExperimentCase = Randomizer.GetRandomExperimentValue(experimentValues);
 
