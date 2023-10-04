@@ -73,8 +73,7 @@ namespace AbTest.Data.Db
         {
             var session = new Session { DeviceToken = deviceToken, Created = DateTime.Now };
             await _dbContext.Sessions.AddAsync(session);
-            await _dbContext.SaveChangesAsync();
-
+            
             return session;
         }
         
@@ -97,8 +96,11 @@ namespace AbTest.Data.Db
             var session = await _dbContext.Sessions.FirstAsync(x => x.Id == SessionId);
              
             session.Experiments = new Experiment[] { experiment };
+        }
 
-            await _dbContext.SaveChangesAsync();
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }

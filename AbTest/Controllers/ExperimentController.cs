@@ -10,7 +10,7 @@ namespace AbTest.Controllers
     public class ExperimentController : ControllerBase
     {      
         [HttpGet]    
-        [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })] //caching response for the same device-token //Duration = 5 is good for testing
+        [ResponseCache(Duration = 10, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })] //caching response for the same device-token //Duration = 10 is good for testing
         public async Task<IActionResult> ButtonColor([FromQuery]DeviceTokenRequestDto request, [FromServices]ButtonColorHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);
@@ -18,13 +18,14 @@ namespace AbTest.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(Duration = 5, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })]
+        [ResponseCache(Duration = 10, NoStore = false, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "device-token" })]
         public async Task<IActionResult> Price([FromQuery] DeviceTokenRequestDto request, [FromServices]PriceHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(request);
             return result;
         }
-            
+
+        [HttpGet]
         public async Task<IActionResult> ExperimentReport([FromServices] ExperimentsReportHandler requestHandler)
         {
             var result = await requestHandler.RequestLogicHttpResponse(new RequestBase());
