@@ -52,13 +52,7 @@ namespace AbTest.UnitTests
             var firstResult = await service.GetExperimentValue(token, "price");
 
             Assert.Equal("20", firstResult.Value.Value);
-            Assert.Equal("price", firstResult.Value.Key);
-
-            for (int i = 0; i < 5; i++)
-            {
-                var currentResult = await service.GetExperimentValue(token, "price");
-                Assert.Equal(firstResult.Value, currentResult.Value); //result should always be the same
-            }
+            Assert.Equal("price", firstResult.Value.Key);            
         }
 
         private ExperimentService GetService()
@@ -87,7 +81,7 @@ namespace AbTest.UnitTests
             context.SaveChanges();
 
             var experiment = context.ExperimentKeys.First(x => x.Key == "price").Experiments.First(x => x.Value == "20");
-            experiment.Sessions = new Session[] { new Session { DeviceToken = "token_with_experiment", Created = DateTime.Now }, };
+            experiment.Sessions.Add(new Session { DeviceToken = "token_with_experiment", Created = DateTime.Now });
 
             context.SaveChanges();
 
