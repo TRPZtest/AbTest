@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AbTest.Data.Db
 {
-    public class ApplicationRepository : IApplicationRepository
+    public class ApplicationRepository /*: IApplicationRepository*/
     {
         private readonly AbTestDbContext _dbContext;
 
@@ -31,15 +31,6 @@ namespace AbTest.Data.Db
                 .FirstOrDefaultAsync(x => x.DeviceToken == deviceToken);
 
             return session;
-        }
-
-        public async Task<int> GetExperimentsCount()
-        {
-            var count = await _dbContext.Experiments
-                .AsNoTracking()
-                    .CountAsync();
-
-            return count;
         }
 
         public async Task<int> GetDevicesWithExperimentCount()
@@ -68,13 +59,19 @@ namespace AbTest.Data.Db
 
             return keys;
         }
-
-        public async Task<Session> AddSession(string deviceToken)
+     
+        public async Task AddExperimentToSession(long experimentId, Session session)
         {
-            var session = new Session { DeviceToken = deviceToken, Created = DateTime.Now };
-            await _dbContext.Sessions.AddAsync(session);
+            var experiment = await _dbContext.Experiments.FirstAsync(x => x.Id == experimentId);
+             experiment.Sessions.Add(session);
+        }
 
-            return session;
+        public async Task AddExperimentToSession(long experimentId, long sessionId)
+        {
+            var experiment = await _dbContext.Experiments.FirstAsync(x => x.Id == experimentId);
+            var session = await _dbContext.Sessions.FirstAsync(x => x.Id == sessionId);
+
+            experiment.Sessions.Add(session);
         }
 
         public async Task<Experiment[]> GetExperimentValues(string experimentKey, bool includeSession)
@@ -90,22 +87,17 @@ namespace AbTest.Data.Db
 
             return await experimentValues.ToArrayAsync(); ;
         }
-
-        public async Task AddExperiment(Experiment experiment, long SessionId)
-        {
-            var session = await _dbContext.Sessions.FirstAsync(x => x.Id == SessionId);
-
-            session.Experiments = new Experiment[] { experiment };
-        }
-
+       
         public async Task<int> SaveChangesAsync()
         {
             return await _dbContext.SaveChangesAsync();
-        }
+        }       
 
-        public void Dispose()
+        public async Task<long> AddSession(Session session)
         {
-            _dbContext.Dispose();
+            var result = await _dbContext.Sessions.AddAsync(session);
+
+            return result.Entity.Id;
         }
     }
 }

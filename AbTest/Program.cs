@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
   
 builder.Services.AddDbContext<AbTestDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("experiment-db")).EnableSensitiveDataLogging());
-builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddScoped<ApplicationRepository>();
 builder.Services.AddTransient<ExperimentService>();
 
 builder.Services.AddMvc();

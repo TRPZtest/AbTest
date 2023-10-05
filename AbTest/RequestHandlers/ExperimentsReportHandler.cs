@@ -6,9 +6,9 @@ namespace AbTest.RequestHandlers
 {
     public class ExperimentsReportHandler : HandlerBase<RequestBase?, ExperimentsReportDto>
     {
-        private readonly IApplicationRepository _repository;
+        private readonly ApplicationRepository _repository;
 
-        public ExperimentsReportHandler(IApplicationRepository repository)
+        public ExperimentsReportHandler(ApplicationRepository repository)
         {
             _repository = repository;
         }

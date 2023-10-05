@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace AbTest.Data.Db.Entites
 {
-    public class Session
+    public record Session
     {
         [Key]
         public long Id { get; set; } 
         public string DeviceToken { get; set; }
         [Required]
-        public DateTime Created { get; set; }       
-        public ICollection<Experiment> Experiments { get; set; }
+        public DateTime Created { get; set; }
+        public List<Experiment> Experiments { get; set; } = new();
+
     }
 }
