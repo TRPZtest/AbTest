@@ -20,36 +20,31 @@ namespace AbTest.Services
 
             var experimentKeyRecord = await _repository.GetExperimentKeyAsync(experimentKey);
 
-            if (experimentKeyRecord == null)
-                throw new Exception("Wrong experiment key");
+            var sessionExist = session != null;
 
-            if (session != null)
+            if (sessionExist)
             {
+                if (experimentKeyRecord == null)
+                    throw new Exception("Wrong experiment key");
+
                 if (experimentKeyRecord?.Created >= session?.Created) //experiment key must be older than session
                     return null;
 
                 var existingExperiment = session?.Experiments.FirstOrDefault(x => x.ExperimentKey.Key == experimentKey);
                 if (existingExperiment != null)// if session has needed experiment - return it
                     return new KeyValuePair<string, string>(existingExperiment.ExperimentKey.Key, existingExperiment.Value);
-
-                var randomExperiment = await GetRandomExperimentAsync(experimentKey);
-
-                await _repository.AddExperimentToSession(randomExperiment.Id, session.Id);
-
-                await _repository.SaveChangesAsync();
-
-                return new KeyValuePair<string, string>(experimentKey, randomExperiment.Value);
             }
-            else // else there is no session with current deviceId - add it
-            {
-                var randomExperiment = await GetRandomExperimentAsync(experimentKey);
-                             
-                await _repository.AddExperimentToSession(randomExperiment.Id, new Session { Created = DateTime.Now, DeviceToken = deviceToken });
+           
+            var randomExperiment = await GetRandomExperimentAsync(experimentKey);
+            
+            if (sessionExist)
+                await _repository.AddExperimentToSession(randomExperiment.Id, session.Id); //jsut linking experiment to session              
+            else
+                await _repository.AddExperimentToSession(randomExperiment.Id, new Session { Created = DateTime.Now, DeviceToken = deviceToken }); //creating session that linked to experiment            
 
-                await _repository.SaveChangesAsync();
+            await _repository.SaveChangesAsync();
 
-                return new KeyValuePair<string, string>(experimentKey, randomExperiment.Value);
-            }                                                                      
+            return new KeyValuePair<string, string>(experimentKey, randomExperiment.Value);
         }
 
         private async Task<Experiment> GetRandomExperimentAsync(string key)
